@@ -166,3 +166,17 @@ def ping_agent(agent_id: str, payload: dict = {}):
     c.run("UPDATE agents SET runs_total=runs_total+1, last_run=NOW(), success_rate=(success_rate*runs_total+:s)/(runs_total+1) WHERE id=:id", s=s, id=agent_id)
     c.close()
     return {"status": "ok"}
+
+
+# ── Frontend Route ──
+from fastapi.responses import HTMLResponse
+
+FRONTEND_HTML = open("index.html").read() if __import__("os").path.exists("index.html") else "<h1>AI Corporate OS</h1><p>Frontend file not found</p>"
+
+@app.get("/", response_class=HTMLResponse)
+def frontend():
+    return FRONTEND_HTML
+
+@app.get("/app", response_class=HTMLResponse)
+def frontend_app():
+    return FRONTEND_HTML
