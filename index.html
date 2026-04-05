@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Corporate OS — Extella</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080f;--bg2:#0d0f1a;--bg3:#12152a;--card:#141828;--border:rgba(99,120,255,.15);--border2:rgba(99,120,255,.28);--accent:#6378ff;--accent2:#a855f7;--green:#22d3a3;--yellow:#f59e0b;--red:#f43f5e;--text:#e2e8f0;--text2:#94a3b8;--muted:#475569}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'Inter',sans-serif;min-height:100vh}
+.bar{background:var(--bg2);border-bottom:1px solid var(--border);height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px}
+.lic{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.ln{font-size:14px;font-weight:700}.ls{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.top-r{display:flex;align-items:center;gap:10px}
+.live{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);background:var(--bg3);border:1px solid var(--border);padding:5px 12px;border-radius:20px}
+.ld{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.btn{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .18s}
+.bp{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}.bp:hover{opacity:.85}
+.bg{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.bg:hover{border-color:var(--accent);color:var(--text)}
+.chip{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 12px 4px 4px;cursor:pointer}
+.av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.un{font-size:12px;font-weight:600}.ur{font-size:10px;color:var(--muted)}
+.layout{display:flex;min-height:calc(100vh - 54px)}
+.sb{width:210px;min-width:210px;background:var(--bg2);border-right:1px solid var(--border);padding:16px 0;display:flex;flex-direction:column}
+.mn{flex:1;overflow-y:auto}.cn{padding:24px}
+.ns{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:0 14px;margin:14px 0 5px}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 14px;font-size:12px;color:var(--text2);cursor:pointer;border-left:2px solid transparent;transition:all .15s}
+.ni:hover{background:rgba(99,120,255,.06);color:var(--text)}
+.ni.on{background:rgba(99,120,255,.1);color:var(--accent);border-left-color:var(--accent)}
+.nbadge{margin-left:auto;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(99,120,255,.2);color:var(--accent)}
+.sbf{margin-top:auto;padding:14px;border-top:1px solid var(--border)}
+.pg{display:none}.pg.on{display:block;animation:fu .22s ease}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.kr{display:grid;gap:12px;margin-bottom:22px}
+.k{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden}
+.k::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
+.k.bl::before{background:var(--accent)}.k.gr::before{background:var(--green)}.k.yl::before{background:var(--yellow)}.k.pu::before{background:var(--accent2)}.k.rd::before{background:var(--red)}
+.kv{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
+.kl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:5px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:18px}
+.ch{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ct{font-size:13px;font-weight:700}
+.cb{padding:16px 18px}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;gap:14px}
+.ph h1{font-size:20px;font-weight:800;letter-spacing:-.4px;margin-bottom:3px}
+.ph p{font-size:12px;color:var(--text2)}
+.tc{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .2s;cursor:pointer;margin-bottom:10px}
+.tc:hover{border-color:var(--border2);transform:translateY(-1px)}
+.tc.urg{border-left:3px solid var(--red)}.tc.td{border-left:3px solid var(--yellow)}.tc.nm{border-left:3px solid var(--accent)}.tc.dn{border-left:3px solid var(--green);opacity:.7}
+.ti{padding:15px 17px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.tt{font-size:13px;font-weight:700;margin-bottom:4px}
+.td2{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:7px}
+.tm2{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mi{font-size:10px;color:var(--muted)}
+.rv{font-size:13px;font-weight:700;color:var(--green);text-align:right}
+.rl{font-size:9px;color:var(--muted);text-align:right}
+.bdg{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;display:inline-block}
+.bu{background:rgba(244,63,94,.12);color:var(--red)}.bt{background:rgba(245,158,11,.12);color:var(--yellow)}.bn{background:rgba(99,120,255,.12);color:var(--accent)}.bd{background:rgba(34,211,163,.12);color:var(--green)}
+.bai{background:linear-gradient(135deg,rgba(99,120,255,.15),rgba(168,85,247,.15));color:#c084fc;border:1px solid rgba(168,85,247,.2)}
+.bxt{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit}
+.bxt:hover{opacity:.85;transform:translateY(-1px)}.bxt.dn{background:linear-gradient(135deg,#22d3a3,#0ea5e9)}
+.fi{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.fi:last-child{border-bottom:none}
+.fdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.fdot.gr{background:var(--green);box-shadow:0 0 5px var(--green)}.fdot.bl{background:var(--accent)}
+.ftxt{font-size:12px;line-height:1.5;flex:1}.ftxt strong{font-weight:700;color:var(--text)}.ftime{font-size:10px;color:var(--muted);margin-top:2px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(5px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.ov.h{display:none}
+.md{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;animation:fu .2s ease}
+.mh{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:sticky;top:0;background:var(--card);z-index:5}
+.mtit{font-size:17px;font-weight:800;margin-bottom:3px}.msub{font-size:12px;color:var(--text2)}
+.mc{width:26px;height:26px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text2);flex-shrink:0}
+.mb2{padding:18px 22px}.mf2{padding:13px 22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.ic{background:var(--bg3);border-radius:8px;padding:10px 13px}
+.il{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}.iv{font-size:14px;font-weight:700}
+.term{background:#000;border-radius:10px;padding:14px;font-family:monospace;font-size:11px;line-height:1.7;margin-bottom:14px;min-height:100px;border:1px solid rgba(99,120,255,.2);overflow-y:auto;max-height:180px}
+.tl{color:#4ade80}.tl.i{color:#94a3b8}.tl.w{color:#fbbf24}.tl.s{color:#22d3a3}.tl.h{color:#818cf8}
+.rb{background:rgba(34,211,163,.06);border:1px solid rgba(34,211,163,.2);border-radius:12px;padding:14px;margin-bottom:14px}
+.rt{font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px}
+.ri{display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:4px}
+.em{text-align:center;padding:30px;color:var(--muted)}.emico{font-size:32px;margin-bottom:8px}.em p{font-size:13px}
+.sp{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lw{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.lc{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:32px;width:100%;max-width:460px}
+.rg{display:grid;gap:8px;margin-bottom:18px}
+.rc{background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px}
+.rc:hover{border-color:rgba(99,120,255,.4)}.rc.sel{border-color:var(--accent);background:rgba(99,120,255,.1)}
+.rca{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.rn{font-size:13px;font-weight:700;margin-bottom:2px}.rd{font-size:11px;color:var(--text2)}
+.rr{margin-left:auto;text-align:right;font-size:11px;color:var(--muted)}
+.rr strong{display:block;font-size:15px;font-weight:800;color:var(--accent)}
+.two{display:grid;grid-template-columns:1fr 300px;gap:16px;margin-bottom:18px}
+.cwr{height:200px;position:relative}
+.mb3{height:4px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:3px}
+.mf3{height:100%;border-radius:3px;transition:width 1s}
+.cl{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.cr{display:grid;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border)}
+.cr:last-child{border-bottom:none}.cr:hover{background:rgba(99,120,255,.04);cursor:pointer}
+input,select{background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-size:13px;outline:none;font-family:inherit;width:100%}
+input:focus,select:focus{border-color:var(--accent)}select option{background:var(--bg3)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+</style>
+</head>
+<body>
+<div id="lw" class="lw">
+  <div class="lc">
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px">
+      <div class="lic" style="width:40px;height:40px;font-size:20px">⚡</div>
+      <div><div style="font-size:16px;font-weight:800">AI Corporate OS</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Powered by Extella · Live</div></div>
+    </div>
+    <div id="ls" style="text-align:center;padding:16px;font-size:13px;color:var(--text2)"><div class="sp"></div>Подключение к API...</div>
+    <div class="rg" id="rg" style="display:none"></div>
+    <button class="btn bp" style="width:100%;padding:13px;display:none;font-size:14px" id="lb" onclick="doLogin()">⚡ Войти в AI OS →</button>
+    <div style="text-align:center;font-size:10px;color:var(--muted);margin-top:10px" id="au"></div>
+  </div>
+</div>
+<div id="aw" style="display:none">
+<div class="bar">
+  <div class="logo"><div class="lic">⚡</div><div><div class="ln">AI Corporate OS</div><div class="ls" id="tc3">—</div></div></div>
+  <div class="top-r">
+    <div class="live"><div class="ld"></div><span id="lc">—</span> агентов</div>
+    <div style="font-size:10px;color:var(--green);font-family:monospace">● API Live</div>
+    <div class="chip" onclick="lo()">
+      <div class="av" id="ta" style="background:linear-gradient(135deg,#6378ff,#a855f7)">👤</div>
+      <div><div class="un" id="tn">—</div><div class="ur" id="tr">—</div></div>
+    </div>
+  </div>
+</div>
+<div class="layout">
+<div class="sb">
+  <div class="ns">Главное</div>
+  <div class="ni on" id="nh" onclick="sp('home',this)"><span style="width:18px;text-align:center">🏠</span>Рабочий стол</div>
+  <div class="ni" id="nt" onclick="sp('tasks',this)"><span style="width:18px;text-align:center">✅</span>Задачи<span class="nbadge" id="tb">0</span></div>
+  <div class="ni" id="nhi" onclick="sp('hist',this)"><span style="width:18px;text-align:center">📋</span>История</div>
+  <div class="ns" id="ds2" style="display:none">Портфель</div>
+  <div class="ni" id="nd" onclick="sp('dash',this)" style="display:none"><span style="width:18px;text-align:center">▦</span>Дашборд</div>
+  <div class="ni" id="nc2" onclick="sp('clients',this)" style="display:none"><span style="width:18px;text-align:center">🏢</span>Клиенты</div>
+  <div class="ni" id="nag" onclick="sp('agents',this)" style="display:none"><span style="width:18px;text-align:center">🤖</span>Агенты</div>
+  <div class="sbf">
+    <div style="background:var(--bg3);border-radius:10px;padding:11px">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Backend API</div>
+      <div style="font-size:9px;font-family:monospace;color:var(--green)">api-production-788d<br>.up.railway.app</div>
+    </div>
+  </div>
+</div>
+<div class="mn"><div class="cn">
+  <div class="pg on" id="p-home"><div class="ph"><div><h1 id="hg">Добро пожаловать</h1><p id="hs">—</p></div></div><div class="kr" id="hk" style="grid-template-columns:repeat(4,1fr)"></div><div id="hc"></div></div>
+  <div class="pg" id="p-tasks">
+    <div class="ph"><div><h1>Мои задачи</h1><p id="tsub">—</p></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn bp" style="font-size:11px;padding:5px 12px" onclick="ft('all',this)">Все</button>
+        <button class="btn bg" style="font-size:11px;padding:5px 12px" onclick="ft('pending',this)">Активные</button>
+        <button class="btn bg" style="font-size:11px;padding:5px 12px" onclick="ft('done',this)">Выполнены</button>
+      </div>
+    </div>
+    <div id="ta2"></div>
+  </div>
+  <div class="pg" id="p-hist"><div class="ph"><div><h1>История</h1><p>Выполненные задачи</p></div></div><div id="hl"></div></div>
+  <div class="pg" id="p-dash">
+    <div class="ph"><div><h1>Дашборд</h1><p>Портфель в реальном времени</p></div><button class="btn bg" onclick="ld()">↺ Обновить</button></div>
+    <div class="kr" id="dk" style="grid-template-columns:repeat(4,1fr)"></div>
+    <div class="two">
+      <div class="card"><div class="ch"><div class="ct">Клиенты</div><span style="font-size:9px;font-family:monospace;background:rgba(34,211,163,.08);color:var(--green);border:1px solid rgba(34,211,163,.2);padding:2px 6px;border-radius:4px">live</span></div><div id="dc"></div></div>
+      <div class="card"><div class="ch"><div class="ct">Активность</div></div><div class="cb" id="df" style="padding:12px 16px"></div></div>
+    </div>
+    <div class="card"><div class="ch"><div class="ct">ROI по клиентам</div></div><div class="cb"><div class="cwr"><canvas id="rc2"></canvas></div></div></div>
+  </div>
+  <div class="pg" id="p-clients">
+    <div class="ph"><div><h1>Клиенты</h1><p id="csub">—</p></div><button class="btn bp" onclick="snc()">+ Новый клиент</button></div>
+    <div id="cl2"></div>
+  </div>
+  <div class="pg" id="p-agents"><div class="ph"><div><h1>AI-агенты</h1><p id="asub">—</p></div></div><div id="al2"></div></div>
+</div></div>
+</div>
+</div>
+<div class="ov h" id="to2"><div class="md" id="tm2"></div></div>
+<div class="ov h" id="eo2"><div class="md" id="em2" style="max-width:500px"></div></div>
+<div class="ov h" id="nco">
+<div class="md" style="max-width:420px">
+  <div class="mh"><div class="mtit">Новый клиент</div><div class="mc" onclick="cm('nco')">✕</div></div>
+  <div class="mb2">
+    <div style="display:grid;gap:12px">
+      <div><div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Название</div><input id="ncn" placeholder="АО Компания"></div>
+      <div><div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Отрасль</div>
+        <select id="nci"><option value="mining">Добыча</option><option value="finance">Финансы</option><option value="construction">Строительство</option><option value="gov">Госсектор</option><option value="telecom">Телеком</option></select></div>
+      <div><div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Город</div><input id="ncc2" placeholder="Алматы"></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+      <button class="btn bg" onclick="cm('nco')">Отмена</button>
+      <button class="btn bp" onclick="cc()">Создать →</button>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+const API=window.location.origin;
+const CL=['linear-gradient(135deg,#6378ff,#a855f7)','linear-gradient(135deg,#22d3a3,#0ea5e9)','linear-gradient(135deg,#f59e0b,#ef4444)','linear-gradient(135deg,#8b5cf6,#ec4899)','linear-gradient(135deg,#0ea5e9,#6378ff)'];
+const IC={predictive_maintenance_analysis:'🔧',dispatch_optimizer:'🚛',shift_data_entry:'📊',ml_credit_scoring:'🎯',aml_monitor:'🔍',aml_transaction_monitor:'🔍',retrain_production_forecast:'🤖',generate_strategy_doc:'📋',default:'⚡'};
+let role=null,tasks=[],clients=[],dash=null,eids={},rch=null;
+const ROLES=[
+  {k:'director',n:'Сейткали Н.А.',t:'Генеральный директор',d:'Руководство',a:'👔',c:CL[0],dir:true},
+  {k:'head',n:'Жаксыбеков А.С.',t:'Нач. производства',d:'QazMunayGas',a:'🏭',c:CL[1]},
+  {k:'analyst',n:'Бекова М.Т.',t:'Аналитик данных',d:'QazMunayGas',a:'📊',c:CL[4]},
+  {k:'dispatcher',n:'Омаров Д.Р.',t:'Диспетчер смены',d:'QazMunayGas',a:'🚛',c:'linear-gradient(135deg,#f59e0b,#ef4444)'},
+  {k:'operator',n:'Сатыбалды Е.',t:'Оператор ОФ',d:'QazMunayGas',a:'⚙️',c:'linear-gradient(135deg,#475569,#334155)'},
+];
+async function api(m,p,d){try{const r=await fetch(API+'/api'+p,m==='POST'?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}:{});return r.ok?r.json():null}catch{return null}}
+async function init(){
+  document.getElementById('au').textContent=window.location.host;
+  const h=await api('GET','/health');
+  if(!h){document.getElementById('ls').innerHTML='<div style="color:var(--red)">⚠ API недоступен</div>';return}
+  document.getElementById('ls').innerHTML='<div style="color:var(--green)">✅ Подключено · DB '+h.db+'</div>';
+  const emps=await api('GET','/employees');
+  if(emps?.employees)emps.employees.forEach(e=>{
+    if(e.name.includes('Сейткали'))eids.director=e.id;
+    else if(e.name.includes('Жаксыбеков'))eids.head=e.id;
+    else if(e.name.includes('Бекова'))eids.analyst=e.id;
+    else if(e.name.includes('Омаров'))eids.dispatcher=e.id;
+    else if(e.name.includes('Сатыбалды'))eids.operator=e.id;
+  });
+  document.getElementById('rg').innerHTML=ROLES.map(r=>`
+    <div class="rc" onclick="sr('${r.k}',this)">
+      <div class="rca" style="background:${r.c}">${r.a}</div>
+      <div><div class="rn">${r.n}</div><div class="rd">${r.t} · ${r.d}</div></div>
+      <div class="rr"><strong id="cnt-${r.k}">—</strong>задач</div>
+    </div>`).join('');
+  document.getElementById('rg').style.display='grid';
+  document.getElementById('lb').style.display='block';
+  ROLES.forEach(async r=>{
+    const el=document.getElementById('cnt-'+r.k);if(!el)return;
+    if(eids[r.k]){const t=await api('GET','/tasks?employee_id='+eids[r.k]+'&status=pending');if(t)el.textContent=t.tasks?.length||0;}
+    else if(r.dir){const d=await api('GET','/dashboard');if(d&&el)el.textContent=(d.kpis?.tasks_done||0)+'✓';}
+  });
+}
+let sk=null;
+function sr(k,el){sk=k;document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel')}
+async function doLogin(){
+  if(!sk){alert('Выберите роль');return}
+  role=ROLES.find(r=>r.k===sk);
+  document.getElementById('lw').style.display='none';
+  document.getElementById('aw').style.display='block';
+  await setup();
+}
+function lo(){sk=null;role=null;tasks=[];document.getElementById('lw').style.display='flex';document.getElementById('aw').style.display='none';document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'))}
+async function setup(){
+  document.getElementById('ta').textContent=role.a;document.getElementById('ta').style.background=role.c;
+  document.getElementById('tn').textContent=role.n.split(' ').slice(0,2).join(' ');
+  document.getElementById('tr').textContent=role.t;document.getElementById('tc3').textContent=role.d;
+  if(role.dir){document.getElementById('ds2').style.display='block';['nd','nc2','nag'].forEach(i=>document.getElementById(i).style.display='flex')}
+  dash=await api('GET','/dashboard');document.getElementById('lc').textContent=dash?.kpis?.agents||'—';
+  await lt();rh();
+}
+async function lt(){
+  if(role.dir){const d=await api('GET','/tasks');tasks=d?.tasks||[];}
+  else{const eid=eids[role.k];if(eid){const d=await api('GET','/tasks?employee_id='+eid);tasks=d?.tasks||[];}else tasks=[];}
+  document.getElementById('tb').textContent=tasks.filter(t=>t.status!=='completed').length||0;
+}
+function gi(t){return IC[t.expert_name]||IC.default}
+function mkCard(t){
+  const dn=t.status==='completed';
+  const cl=dn?'dn':t.priority==='urgent'?'urg':t.priority==='today'?'td':'nm';
+  const bc=dn?'bd':t.priority==='urgent'?'bu':t.priority==='today'?'bt':'bn';
+  const bt=dn?'✅ Выполнено':t.priority==='urgent'?'🔴 СРОЧНО':t.priority==='today'?'🟡 Сегодня':'📋 Плановая';
+  return`<div class="tc ${cl}" onclick="ot('${t.id}')">
+    <div class="ti">
+      <div>
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap">
+          <span style="font-size:18px">${gi(t)}</span>
+          <span class="bdg ${bc}">${bt}</span>
+          <span class="bdg bai">⚡ Extella</span>
+          ${t.employee_name?'<span style="font-size:10px;color:var(--muted)">'+t.employee_name+'</span>':''}
+        </div>
+        <div class="tt">${t.title}</div>
+        <div class="td2">${(t.description||'').substring(0,90)}</div>
+        <div class="tm2"><div class="mi">📌 ${t.source||'manual'}</div><div class="mi">🤖 ${t.expert_name||'—'}</div></div>
+      </div>
+      <div>
+        <div class="rv">${t.roi_estimate||'—'}</div><div class="rl">ROI</div>
+        <div style="margin-top:8px">
+          ${!dn?'<button class="bxt" onclick="event.stopPropagation();ot(''+t.id+'')">⚡ Запустить</button>'
+              :'<button class="bxt dn" onclick="event.stopPropagation()">✓ Готово</button>'}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function rh(){
+  const h=new Date().getHours();document.getElementById('hg').textContent=(h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер')+', '+role.n.split(' ')[1]+'!';
+  const pend=tasks.filter(t=>t.status!=='completed');document.getElementById('hs').textContent=role.d+' · '+pend.length+' задач ожидают';
+  const kpis=role.dir&&dash?[{v:dash.kpis?.clients||0,l:'Клиентов',c:'bl'},{v:dash.kpis?.agents||0,l:'AI-агентов',c:'gr'},{v:'$'+Number(dash.kpis?.roi||0).toLocaleString(),l:'ROI',c:'pu'},{v:dash.kpis?.tasks_done||0,l:'Выполнено',c:'yl'}]
+    :[{v:tasks.length,l:'Задач',c:'bl'},{v:pend.length,l:'Ожидают',c:'yl'},{v:tasks.filter(t=>t.status==='completed').length,l:'Выполнено',c:'gr'},{v:pend.filter(t=>t.priority==='urgent').length,l:'Срочных',c:'rd'}];
+  document.getElementById('hk').innerHTML=kpis.map(k=>'<div class="k '+k.c+'"><div class="kv">'+k.v+'</div><div class="kl">'+k.l+'</div></div>').join('');
+  const urg=pend.filter(t=>t.priority==='urgent'),tod=pend.filter(t=>t.priority!=='urgent');
+  let html='';
+  if(urg.length)html+='<div style="font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px"><span style="width:3px;height:16px;background:var(--red);border-radius:2px;display:inline-block"></span>🔴 Срочные</div>'+urg.slice(0,3).map(mkCard).join('');
+  if(tod.length)html+='<div style="font-size:14px;font-weight:700;margin-bottom:12px;margin-top:20px;display:flex;align-items:center;gap:8px"><span style="width:3px;height:16px;background:var(--yellow);border-radius:2px;display:inline-block"></span>🟡 На сегодня</div>'+tod.slice(0,3).map(mkCard).join('');
+  if(!html)html='<div class="em"><div class="emico">✅</div><p>Нет активных задач</p></div>';
+  document.getElementById('hc').innerHTML=html;
+  ra('all');
+  const dn2=tasks.filter(t=>t.status==='completed');
+  document.getElementById('hl').innerHTML=dn2.length?dn2.map(t=>'<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px"><span style="font-size:18px">✅</span><div style="flex:1"><div style="font-size:13px;font-weight:600">'+t.title+'</div><div style="font-size:11px;color:var(--text2)">'+( t.expert_name||'—')+'</div></div><div style="font-size:11px;color:var(--green)">✓</div></div>').join(''):'<div class="em"><div class="emico">📋</div><p>История пуста</p></div>';
+}
+function ra(f){
+  document.getElementById('tsub').textContent=tasks.length+' задач · '+tasks.filter(t=>t.status!=='completed').length+' активных';
+  const list=f==='pending'?tasks.filter(t=>t.status!=='completed'):f==='done'?tasks.filter(t=>t.status==='completed'):tasks;
+  document.getElementById('ta2').innerHTML=list.length?list.map(mkCard).join(''):'<div class="em"><div class="emico">✅</div><p>Нет задач</p></div>';
+}
+function ft(f,btn){document.querySelectorAll('.ph .btn').forEach(b=>{b.className='btn bg';b.style.fontSize='11px';b.style.padding='5px 12px'});btn.className='btn bp';btn.style.fontSize='11px';btn.style.padding='5px 12px';ra(f)}
+function ot(id){
+  const t=tasks.find(x=>x.id===id);if(!t)return;
+  const dn=t.status==='completed';
+  document.getElementById('tm2').innerHTML='<div class="mh"><div><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-size:18px">'+gi(t)+'</span><span class="bdg '+(dn?'bd':t.priority==='urgent'?'bu':'bt')+'">'+(dn?'✅ Выполнено':t.priority==='urgent'?'🔴 СРОЧНО':'🟡 Сегодня')+'</span></div><div class="mtit">'+t.title+'</div><div class="msub">'+t.expert_name+' · '+t.source+'</div></div><div class="mc" onclick="cm('to2')">✕</div></div><div class="mb2"><div class="ig"><div class="ic"><div class="il">ROI</div><div class="iv" style="color:var(--green)">'+(t.roi_estimate||'—')+'</div></div><div class="ic"><div class="il">Эксперт</div><div class="iv" style="font-family:monospace;font-size:11px">'+(t.expert_name||'—')+'</div></div></div><div style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:14px">'+(t.description||'Нет описания')+'</div></div><div class="mf2"><button class="btn bg" onclick="cm('to2')">Закрыть</button>'+((!dn)?'<button class="bxt" onclick="cm('to2');la(''+id+'')">⚡ Запустить в Extella →</button>':'<button class="bxt dn">✓ Выполнено</button>')+'</div>';
+  document.getElementById('to2').classList.remove('h');
+}
+const SC={predictive_maintenance_analysis:[{t:400,c:'i',l:'Загрузка CSV датчиков...'},{t:1100,c:'i',l:'FFT-анализ вибрации подшипников'},{t:2000,c:'w',l:'⚠ Аномалия: подшипник #3 критический'},{t:3000,c:'i',l:'Прогноз отказа: 8-12 дней'},{t:3800,c:'s',l:'✓ Записываем в AI OS...'}],ml_credit_scoring:[{t:400,c:'i',l:'Загрузка 5,000 заявок...'},{t:1200,c:'i',l:'XGBoost скоринг...'},{t:2200,c:'i',l:'Точность 94.2%'},{t:3000,c:'s',l:'✓ ROI $82,000 записан'}],dispatch_optimizer:[{t:300,c:'i',l:'Перерасчёт маршрутов...'},{t:900,c:'i',l:'Потери: 4.2% vs 18%'},{t:1800,c:'s',l:'✓ Маршруты готовы'}],shift_data_entry:[{t:400,c:'i',l:'OCR показаний...'},{t:1300,c:'i',l:'24 прибора валидированы...'},{t:2200,c:'s',l:'✓ Рапорт отправлен'}],default:[{t:400,c:'i',l:'Инициализация...'},{t:1200,c:'i',l:'Обработка...'},{t:2000,c:'s',l:'✓ Выполнено!'}]};
+const RS={predictive_maintenance_analysis:{t:'Предиктивный анализ ТО',i:['Подшипник #3 — критический','Рекомендовано ТО: 25-27 апреля','Предотвращено: ~$83,000'],r:83000,m:240,s:'Предиктивный анализ ЭКГ-12. Подшипник #3 критический.'},ml_credit_scoring:{t:'ML-скоринг',i:['5,000 заявок. Точность 94.2%','Авто-решение 78%','Срок: 5 дней → 4 часа'],r:82000,m:240,s:'ML-скоринг 5,000 заявок. ROI $82,000.'},dispatch_optimizer:{t:'Оптимизация маршрутов',i:['Потери: 18% → 4.2%','Выполнение плана 96%'],r:0,m:60,s:'Маршруты перераспределены.'},shift_data_entry:{t:'Ввод показаний',i:['24 прибора внесены','Рапорт отправлен'],r:0,m:40,s:'Показания внесены.'},default:{t:'Задача выполнена',i:['Обработано','В системе'],r:0,m:30,s:'Задача выполнена.'}};
+async function la(id){
+  const t=tasks.find(x=>x.id===id);if(!t)return;
+  document.getElementById('em2').innerHTML='<div class="mh"><div><div class="mtit">⚡ Запуск Extella Expert</div><div class="msub" style="font-family:monospace">'+(t.expert_name||'default')+'</div></div><div class="mc" onclick="cm('eo2')">✕</div></div><div class="mb2"><div class="term" id="to3"><div class="tl h">▶ Extella AI OS · Live</div></div><div id="er3"></div><div style="text-align:center" id="eb3"><button class="btn bg" style="font-size:11px" onclick="cm('eo2')">Отмена</button></div></div>';
+  document.getElementById('eo2').classList.remove('h');
+  const sc=SC[t.expert_name]||SC.default,term=document.getElementById('to3');
+  sc.forEach(({t:d,c,l})=>setTimeout(()=>{const el=document.createElement('div');el.className='tl '+c;el.textContent=l;term.appendChild(el);term.scrollTop=term.scrollHeight;if(c==='s')setTimeout(()=>sr3(id,t),500);},d));
+}
+async function sr3(id,t){
+  const res=RS[t.expert_name]||RS.default;
+  const ar=await api('POST','/tasks/'+id+'/complete',{result_summary:res.s,time_saved_minutes:res.m,roi_realized:res.r});
+  const ok=ar?.status==='completed';
+  document.getElementById('er3').innerHTML='<div class="rb"><div class="rt">✅ '+res.t+'</div>'+res.i.map(i=>'<div class="ri"><span style="color:var(--green)">✓</span>'+i+'</div>').join('')+'<div style="margin-top:8px;font-size:11px;color:var(--text2)">⏱ '+res.m+' мин'+(res.r>0?' · 💰 $'+res.r.toLocaleString():'')+'</div><div style="margin-top:4px;font-size:10px;'+(ok?'color:var(--green)':'color:var(--yellow)')+'">'+(ok?'✓ Записано в PostgreSQL':'⚠ Выполнено локально')+'</div></div>';
+  document.getElementById('eb3').innerHTML='<div style="display:flex;gap:10px;justify-content:center"><button class="btn bg" onclick="cm('eo2')">Закрыть</button><button class="bxt dn" onclick="md3(''+id+'')">✓ Отметить выполненным</button></div>';
+  await lt();
+}
+async function md3(id){
+  const i=tasks.findIndex(t=>t.id===id);if(i>=0)tasks[i].status='completed';
+  document.getElementById('tb').textContent=tasks.filter(t=>t.status!=='completed').length||0;
+  cm('eo2');ra('all');rh();sp('tasks',document.getElementById('nt'));
+}
+async function ld(){
+  document.getElementById('dk').innerHTML='<div style="padding:20px;text-align:center"><div class="sp"></div></div>';
+  dash=await api('GET','/dashboard');const cl=await api('GET','/clients');clients=cl?.clients||[];
+  if(!dash)return;
+  const kpis=[{v:dash.kpis?.clients||0,l:'Клиентов',c:'bl'},{v:dash.kpis?.agents||0,l:'AI-агентов',c:'gr'},{v:'$'+Number(dash.kpis?.roi||0).toLocaleString(),l:'ROI',c:'pu'},{v:dash.kpis?.tasks_done||0,l:'Выполнено',c:'yl'}];
+  document.getElementById('dk').innerHTML=kpis.map(k=>'<div class="k '+k.c+'"><div class="kv">'+k.v+'</div><div class="kl">'+k.l+'</div></div>').join('');
+  document.getElementById('dc').innerHTML=clients.length?clients.map((c,i)=>{
+    const pct=c.progress_pct||(c.tasks_total>0?Math.round(c.tasks_done/c.tasks_total*100):0);
+    return'<div class="cr" style="grid-template-columns:26px 1fr 50px 60px"><div style="width:24px;height:24px;border-radius:5px;background:'+CL[i%CL.length]+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff">'+c.name.charAt(0)+'</div><div><div style="font-size:12px;font-weight:700">'+c.name+'</div><div class="mb3"><div class="mf3" style="width:'+pct+'%;background:'+(pct>70?'var(--green)':pct>40?'var(--accent)':'var(--red)')+'"></div></div></div><div style="font-size:12px;font-weight:700;color:'+(pct>70?'var(--green)':pct>40?'var(--yellow)':'var(--red)')+'">'+pct+'%</div><div style="font-size:12px;font-weight:700;color:var(--green)">$'+Number(c.roi_realized||c.roi_sum||0).toLocaleString()+'</div></div>';
+  }).join(''):'<div class="em" style="padding:20px"><p>Нет клиентов</p></div>';
+  const act=dash.activity||[];
+  document.getElementById('df').innerHTML=act.length?act.slice(0,7).map(a=>'<div class="fi"><div class="fdot gr"></div><div><div class="ftxt"><strong>'+(a.client_name||'—')+'</strong> · '+(a.employee_name||'—')+': '+(a.title||'—')+'</div><div class="ftime">'+(a.roi_realized>0?'💰 $'+Number(a.roi_realized).toLocaleString():'Завершено')+'</div></div></div>').join(''):'<div class="em" style="padding:20px"><p>Нет активности</p></div>';
+  if(rch)rch.destroy();
+  const ctx=document.getElementById('rc2');
+  if(ctx&&clients.length)rch=new Chart(ctx,{type:'bar',data:{labels:clients.map(c=>c.name.split(' ')[0]),datasets:[{label:'ROI',data:clients.map(c=>Number(c.roi_realized||c.roi_sum||0)),backgroundColor:'rgba(99,120,255,.7)',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'$'+c.raw.toLocaleString()}}},scales:{x:{grid:{color:'rgba(99,120,255,.08)'},ticks:{color:'var(--muted)',font:{size:10}}},y:{grid:{color:'rgba(99,120,255,.08)'},ticks:{color:'var(--muted)',font:{size:10},callback:v=>'$'+v.toLocaleString()}}}}});
+}
+async function lcl(){
+  const d=await api('GET','/clients');clients=d?.clients||[];
+  document.getElementById('csub').textContent=clients.length+' компаний · Live PostgreSQL';
+  document.getElementById('cl2').innerHTML=clients.length?'<div class="cl">'+clients.map((c,i)=>{const pct=c.progress_pct||(c.tasks_total>0?Math.round(c.tasks_done/c.tasks_total*100):0);const sc=pct>70?'bd':pct>20?'bt':'bn';const st=pct>70?'● Активен':pct>20?'◑ Пилот':'○ Настройка';return'<div class="cr" style="grid-template-columns:26px 1fr 70px 60px 60px 65px"><div style="width:24px;height:24px;border-radius:5px;background:'+CL[i%CL.length]+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff">'+c.name.charAt(0)+'</div><div><div style="font-size:12px;font-weight:700">'+c.name+'</div><div style="font-size:10px;color:var(--text2)">'+(c.industry||'—')+' · '+(c.city||'—')+'</div></div><span class="bdg '+sc+'">'+st+'</span><div style="font-size:12px;font-weight:700">'+(c.agents_count||0)+'</div><div><div style="font-size:11px;font-weight:700;color:'+(pct>70?'var(--green)':pct>40?'var(--yellow)':'var(--red)')+'">'+pct+'%</div><div class="mb3"><div class="mf3" style="width:'+pct+'%;background:'+(pct>70?'var(--green)':pct>40?'var(--accent)':'var(--red)')+'"></div></div></div><div style="font-size:13px;font-weight:700;color:'+((c.roi_realized||c.roi_sum)>0?'var(--green)':'var(--muted)')+'">$'+Number(c.roi_realized||c.roi_sum||0).toLocaleString()+'</div></div>';}).join('')+'</div>'
+  :'<div class="em"><div class="emico">🏢</div><p>Нет клиентов</p></div>';
+}
+async function lag(){
+  const d=await api('GET','/agents');const ags=d?.agents||[];
+  document.getElementById('asub').textContent=ags.length+' агентов';
+  document.getElementById('al2').innerHTML=ags.length?'<div class="cl">'+ags.map(a=>'<div class="cr" style="grid-template-columns:26px 1fr 80px 60px"><div style="width:24px;height:24px;border-radius:5px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:12px">⚡</div><div><div style="font-size:12px;font-weight:600;font-family:monospace">'+a.name+'</div><div style="font-size:10px;color:var(--text2)">'+(a.description||'—')+'</div></div><span class="bdg bd">'+(a.category||'—')+'</span><div style="font-size:13px;font-weight:700">'+(a.runs_total||0)+'</div></div>').join('')+'</div>'
+  :'<div class="em"><div class="emico">🤖</div><p>Нет агентов</p></div>';
+}
+async function cc(){
+  const name=document.getElementById('ncn').value.trim();const ind=document.getElementById('nci').value;const city=document.getElementById('ncc2').value.trim();
+  if(!name){alert('Введите название');return}
+  const r=await api('POST','/clients',{name,industry:ind,city,employees_total:0,contract_value:''});
+  if(r?.id){cm('nco');await lcl();alert('✅ Клиент "'+name+'" создан!\nID: '+r.id);}else alert('Ошибка');
+}
+function sp(id,el){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  const p=document.getElementById('p-'+id);if(p)p.classList.add('on');
+  if(el)el.classList.add('on');
+  document.querySelector('.mn').scrollTop=0;
+  if(id==='dash')ld();if(id==='clients')lcl();if(id==='agents')lag();if(id==='tasks')ra('all');
+}
+function cm(id){document.getElementById(id).classList.add('h')}
+function snc(){document.getElementById('nco').classList.remove('h')}
+window.onload=init;
+</script>
+</body></html>
