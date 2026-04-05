@@ -1,4 +1,6 @@
-import os, json, uuid, psycopg2, psycopg2.extras
+import os
+import json
+import uuid
 from datetime import datetime
 from typing import Optional
 from fastapi import FastAPI, HTTPException
@@ -10,7 +12,12 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 
 def get_db():
+    import psycopg2
     return psycopg2.connect(DATABASE_URL)
+
+def dict_cursor(c):
+    import psycopg2.extras
+    return c.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
 def setup_tables():
     if not DATABASE_URL:
@@ -44,7 +51,7 @@ def setup():
 
 @app.get("/api/dashboard")
 def dashboard():
-    c = get_db(); cur = c.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    c = get_db(); cur = dict_cursor(c)
     cur.execute("SELECT COUNT(*) as clients FROM clients"); kpi = dict(cur.fetchone())
     cur.execute("SELECT COUNT(*) as agents FROM agents"); kpi.update(cur.fetchone())
     cur.execute("SELECT COALESCE(SUM(roi_realized), 0) as roi FROM clients"); kpi.update(cur.fetchone())
@@ -58,7 +65,7 @@ def dashboard():
 
 @app.get("/api/clients")
 def list_clients():
-    c = get_db(); cur = c.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    c = get_db(); cur = dict_cursor(c)
     cur.execute("SELECT c.*, COUNT(DISTINCT e.id) employees_active, COUNT(DISTINCT t.id) tasks_total, COUNT(DISTINCT CASE WHEN t.status='completed' THEN t.id END) tasks_done, COUNT(DISTINCT a.id) agents_count, COALESCE(SUM(te.roi_realized),0) roi_sum FROM clients c LEFT JOIN employees e ON e.client_id=c.id LEFT JOIN tasks t ON t.client_id=c.id LEFT JOIN agents a ON a.client_id=c.id LEFT JOIN task_executions te ON te.client_id=c.id GROUP BY c.id ORDER BY c.created_at DESC")
     data = [dict(r) for r in cur.fetchall()]
     cur.close(); c.close()
@@ -73,7 +80,7 @@ def create_client(payload: dict):
 
 @app.get("/api/clients/{cid}")
 def get_client(cid: str):
-    c = get_db(); cur = c.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    c = get_db(); cur = dict_cursor(c)
     cur.execute("SELECT * FROM clients WHERE id=%s", (cid,))
     cl = cur.fetchone()
     if not cl: raise HTTPException(404, "Not found")
@@ -91,7 +98,7 @@ def create_employee(payload: dict):
 
 @app.get("/api/employees")
 def list_employees(client_id: Optional[str]=None):
-    c = get_db(); cur = c.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    c = get_db(); cur = dict_cursor(c)
     if client_id:
         cur.execute("SELECT e.*, COUNT(t.id) tasks_total, COUNT(CASE WHEN t.status='completed' THEN 1 END) tasks_done FROM employees e LEFT JOIN tasks t ON t.employee_id=e.id WHERE e.client_id=%s GROUP BY e.id", (client_id,))
     else:
@@ -109,7 +116,7 @@ def create_task(payload: dict):
 
 @app.get("/api/tasks")
 def get_tasks(employee_id: Optional[str]=None, client_id: Optional[str]=None, status: Optional[str]=None):
-    c = get_db(); cur = c.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    c = get_db(); cur = dict_cursor(c)
     where, params = [], []
     if employee_id: where.append("t.employee_id=%s"); params.append(employee_id)
     if client_id: where.append("t.client_id=%s"); params.append(client_id)
@@ -122,7 +129,7 @@ def get_tasks(employee_id: Optional[str]=None, client_id: Optional[str]=None, st
 
 @app.post("/api/tasks/{task_id}/complete")
 def complete_task(task_id: str, payload: dict):
-    c = get_db(); cur = c.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    c = get_db(); cur = dict_cursor(c)
     cur.execute("SELECT * FROM tasks WHERE id=%s", (task_id,))
     task = cur.fetchone()
     if not task: raise HTTPException(404, "Task not found")
